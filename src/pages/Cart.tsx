@@ -1,63 +1,16 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import hoodie1 from "@/assets/hoodie-1.jpg";
-import tshirt1 from "@/assets/tshirt-1.jpg";
-import jacket1 from "@/assets/jacket-1.jpg";
+import { useCart } from "@/contexts/CartContext";
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "Cyber Hoodie V1",
-      price: 89,
-      quantity: 2,
-      size: "L",
-      color: "Black",
-      image: hoodie1,
-    },
-    {
-      id: 2,
-      name: "Neon Tee",
-      price: 45,
-      quantity: 1,
-      size: "M",
-      color: "Purple",
-      image: tshirt1,
-    },
-    {
-      id: 3,
-      name: "Tech Jacket",
-      price: 149,
-      quantity: 1,
-      size: "XL",
-      color: "Dark Gray",
-      image: jacket1,
-    },
-  ]);
-
-  const updateQuantity = (id: number, newQuantity: number) => {
-    if (newQuantity === 0) {
-      setCartItems(items => items.filter(item => item.id !== id));
-    } else {
-      setCartItems(items => 
-        items.map(item => 
-          item.id === id ? { ...item, quantity: newQuantity } : item
-        )
-      );
-    }
-  };
-
-  const removeItem = (id: number) => {
-    setCartItems(items => items.filter(item => item.id !== id));
-  };
+  const { cartItems, updateQuantity, removeFromCart } = useCart();
 
   const subtotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  const shipping = subtotal > 100 ? 0 : 15;
+  const shipping = subtotal > 1000 ? 0 : 149;
   const tax = Math.round(subtotal * 0.08 * 100) / 100;
   const total = subtotal + shipping + tax;
 
@@ -124,7 +77,7 @@ export default function Cart() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeFromCart(item.id)}
                         className="text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -154,7 +107,7 @@ export default function Cart() {
                       
                       <div className="text-right">
                         <p className="text-lg font-bold text-accent">
-                          ${item.price * item.quantity}
+                          {item.price * item.quantity} SEK
                         </p>
                       </div>
                     </div>
@@ -181,31 +134,31 @@ export default function Cart() {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${subtotal}</span>
+                  <span>{subtotal} SEK</span>
                 </div>
                 
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? 'Free' : `$${shipping}`}</span>
+                  <span>{shipping === 0 ? 'Free' : `${shipping} SEK`}</span>
                 </div>
                 
                 <div className="flex justify-between">
                   <span>Tax</span>
-                  <span>${tax}</span>
+                  <span>{tax} SEK</span>
                 </div>
                 
                 <Separator className="bg-border" />
                 
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total</span>
-                  <span className="text-accent">${total}</span>
+                  <span className="text-accent">{total} SEK</span>
                 </div>
               </div>
 
               {shipping > 0 && (
                 <div className="mt-4 p-3 bg-accent/10 border border-accent/20 rounded-lg">
                   <p className="text-sm text-accent">
-                    Add ${(100 - subtotal).toFixed(2)} more for free shipping!
+                    Add {(1000 - subtotal).toFixed(0)} SEK more for free shipping!
                   </p>
                 </div>
               )}

@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Filter, Grid, List } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "@/hooks/use-toast";
 import hoodie1 from "@/assets/hoodie-1.jpg";
 import tshirt1 from "@/assets/tshirt-1.jpg";
 import jacket1 from "@/assets/jacket-1.jpg";
@@ -13,13 +15,14 @@ export default function Products() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
+  const { addToCart } = useCart();
 
   const products = [
     {
       id: 1,
       name: "Cyber Hoodie V1",
-      price: 89,
-      originalPrice: 119,
+      price: 189,
+      originalPrice: 249,
       image: hoodie1,
       badge: "Limited",
       category: "hoodies",
@@ -28,7 +31,7 @@ export default function Products() {
     {
       id: 2,
       name: "Neon Tee",
-      price: 45,
+      price: 159,
       originalPrice: null,
       image: tshirt1,
       badge: "New",
@@ -38,8 +41,8 @@ export default function Products() {
     {
       id: 3,
       name: "Tech Jacket",
-      price: 149,
-      originalPrice: 189,
+      price: 239,
+      originalPrice: 289,
       image: jacket1,
       badge: "Sale",
       category: "jackets",
@@ -48,7 +51,7 @@ export default function Products() {
     {
       id: 4,
       name: "Cyber Cargo Pants",
-      price: 79,
+      price: 179,
       originalPrice: null,
       image: pants1,
       badge: "Popular",
@@ -58,7 +61,7 @@ export default function Products() {
     {
       id: 5,
       name: "Matrix Hoodie",
-      price: 95,
+      price: 199,
       originalPrice: null,
       image: hoodie1,
       badge: "New",
@@ -68,8 +71,8 @@ export default function Products() {
     {
       id: 6,
       name: "Digital Tee",
-      price: 42,
-      originalPrice: 55,
+      price: 149,
+      originalPrice: 189,
       image: tshirt1,
       badge: "Sale",
       category: "tshirts",
@@ -191,15 +194,29 @@ export default function Products() {
                     <p className="text-muted-foreground mb-4">{product.description}</p>
                   )}
                   <div className="flex items-center gap-2">
-                    <span className="text-xl font-bold text-accent">${product.price}</span>
+                    <span className="text-xl font-bold text-accent">{product.price} SEK</span>
                     {product.originalPrice && (
-                      <span className="text-muted-foreground line-through">${product.originalPrice}</span>
+                      <span className="text-muted-foreground line-through">{product.originalPrice} SEK</span>
                     )}
                   </div>
                 </div>
                 
                 <div className={`flex gap-2 ${viewMode === 'list' ? 'w-fit' : ''}`}>
                   <Button 
+                    onClick={() => {
+                      addToCart({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        size: 'M',
+                        color: 'Default'
+                      });
+                      toast({
+                        title: "Added to cart!",
+                        description: `${product.name} has been added to your cart.`,
+                      });
+                    }}
                     className={`bg-gradient-primary shadow-button hover:shadow-glow transition-all duration-300 ${
                       viewMode === 'list' ? 'flex-1' : 'w-full'
                     }`}

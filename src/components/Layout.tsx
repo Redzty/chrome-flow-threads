@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ShoppingCart, Menu, X, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/contexts/CartContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,8 +10,9 @@ interface LayoutProps {
 
 export const Layout = ({ children }: LayoutProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [cartCount] = useState(3); // Mock cart count
+  const { getTotalItems } = useCart();
   const location = useLocation();
+  const cartCount = getTotalItems();
 
   const navigation = [
     { name: "Home", href: "/" },
